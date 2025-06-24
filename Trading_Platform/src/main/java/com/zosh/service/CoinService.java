@@ -5,7 +5,7 @@ import java.util.List;
 import com.zosh.modal.Coin;
 
 public interface CoinService {
-	List<Coin> getCoinList(int page);
+	List<Coin> getCoinList(int page) throws Exception;
 	
 	String getMarketChart(String coinId, int days);
 	
