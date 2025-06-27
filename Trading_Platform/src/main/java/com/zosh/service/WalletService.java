@@ -8,7 +8,7 @@ public interface WalletService {
 	
 	Wallet getUserWallet(User user);
 	Wallet addBalance(Wallet wallet,Long money);
-	Wallet findById(Long id);
-	Wallet walletToWalletTransfer(User sender,Wallet receiverWallet,Long amount);
-	Wallet payOrderpayment(Order order,User user);
+	Wallet findWalletById(Long id) throws Exception;
+	Wallet walletToWalletTransfer(User sender,Wallet receiverWallet,Long amount) throws Exception;
+	Wallet payOrderpayment(Order order,User user) throws Exception;
 }
