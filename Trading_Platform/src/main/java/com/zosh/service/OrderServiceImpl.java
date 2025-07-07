@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zosh.domain.OrderStatus;
 import com.zosh.domain.OrderType;
+import com.zosh.modal.Asset;
 import com.zosh.modal.Coin;
 import com.zosh.modal.Order;
 import com.zosh.modal.OrderItem;
@@ -28,6 +29,9 @@ public class OrderServiceImpl  implements OrderService{
 	
 	@Autowired
 	private OrderItemRepository orderItemRepository;
+	
+	@Autowired
+	private AssetService assetService;
 	
 	@Override
 	public Order createOrder(User user, OrderItem orderItem, OrderType orderType) {
@@ -86,8 +90,12 @@ public class OrderServiceImpl  implements OrderService{
 		Order savedOrder=orderRepository.save(order);
 		
 		//create Asset Here 
-		
-		
+		Asset oldAsset= assetService.findAssetByUserIdAndCoinId(order.getUser().getId(), order.getOrderItem().getCoin().getId());
+		if(oldAsset==null) {
+			assetService.createAsset(user, orderItem.getCoin(), orderItem.getQuantity());
+		} else {
+			assetService.updateAsset(oldAsset.getId(), quantity);
+		}
 		return savedOrder;
 	}
 	
@@ -99,9 +107,11 @@ public class OrderServiceImpl  implements OrderService{
 		}
 		double sellPrice= coin.getCurrentPrice();
 		
-		double buyPrice=assetToSell.getprice();
+		Asset assetToSell=assetService.findAssetByUserIdAndCoinId(user.getId(), coin.getId());
+		double buyPrice=assetToSell.getBuyPrice();
 		
-		OrderItem orderItem=createOrderItem(coin,quantity,buyPrice,sellPrice);
+		if(assetToSell != null) {
+			OrderItem orderItem=createOrderItem(coin,quantity,buyPrice,sellPrice);
 		
 		Order order=createOrder(user, orderItem, OrderType.SELL);
 		orderItem.setOrder(order);
@@ -112,15 +122,16 @@ public class OrderServiceImpl  implements OrderService{
 			Order savedOrder=orderRepository.save(order);
 			walletService.payOrderpayment(order, user);
 		
-			Asset updatedAsset=assetService.uupdateAsset(assetToSell.getId(),-quantity);
+			Asset updatedAsset=assetService.updateAsset(assetToSell.getId(),-quantity);
+			
 				if(updatedAsset.getQuantity()*coin.getCurrentPrice() <=1) {
-				assetService.deleteAsset(updatedAsset.getId);
+				assetService.deleteAsset(updatedAsset.getId());
 			}
 				return savedOrder;
 		}
-		throw new Exception("Insufficient quantity to sell");
-		
-		
+		throw new Exception("Insufficient quantity to sell");	
+		}
+		throw new Exception("asset not found");
 	}
 	
 	@Override
