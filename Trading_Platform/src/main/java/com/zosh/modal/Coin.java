@@ -76,7 +76,7 @@ public class Coin {
 	    @JsonProperty("ath_date")
 	    private Date athDate;
 	    
-	    @JsonProperty("atl_date")
+	    @JsonProperty("atl")
 	    private double atl;
 
 	    @JsonProperty("atl_change_percentage")

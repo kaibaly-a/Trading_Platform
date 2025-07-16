@@ -23,6 +23,7 @@ import com.zosh.response.AuthResponse;
 import com.zosh.service.CustomeUserDetailsService;
 import com.zosh.service.EmailService;
 import com.zosh.service.TwoFactorOtpService;
+import com.zosh.service.WatchlistService;
 import com.zosh.utils.OtpUtils;
 
 @RestController
@@ -41,6 +42,9 @@ public class AuthController {
 	@Autowired
 	private EmailService emailService;
 	
+	@Autowired
+	private WatchlistService watchlistService;
+	
 	@PostMapping("/signup")
 	public ResponseEntity<AuthResponse> register(@RequestBody User user) throws Exception{
 		
@@ -57,6 +61,8 @@ public class AuthController {
 		newUser.setFullName(user.getFullName());
 		
 		User savedUser= userRepository.save(newUser);
+		
+		watchlistService.createWatchlist(savedUser);
 		
 		Authentication auth= new UsernamePasswordAuthenticationToken(
 				user.getEmail(),

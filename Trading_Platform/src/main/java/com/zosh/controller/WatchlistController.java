@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zosh.modal.Coin;
@@ -18,6 +19,7 @@ import com.zosh.service.UserService;
 import com.zosh.service.WatchlistService;
 
 @RestController
+@RequestMapping("/api/watchlist")
 public class WatchlistController {
 	
 	@Autowired
