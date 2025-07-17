@@ -20,7 +20,6 @@ import com.zosh.service.UserService;
 import com.zosh.service.WalletService;
 
 @RestController
-@RequestMapping("/api/wallet")
 public class WalletController {
 	
 	@Autowired
